@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30517.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement", "TaskManagement\TaskManagement.csproj", "{A961A42A-D436-4358-B6ED-93187E982543}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement_DAL", "TaskManagement_DAL\TaskManagement_DAL.csproj", "{A0B79031-4567-4726-898E-6D5992CF9814}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A961A42A-D436-4358-B6ED-93187E982543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A961A42A-D436-4358-B6ED-93187E982543}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A961A42A-D436-4358-B6ED-93187E982543}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A961A42A-D436-4358-B6ED-93187E982543}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0B79031-4567-4726-898E-6D5992CF9814}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0B79031-4567-4726-898E-6D5992CF9814}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0B79031-4567-4726-898E-6D5992CF9814}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0B79031-4567-4726-898E-6D5992CF9814}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1761D43F-FC0D-4D77-97ED-0AFF74E05223}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,360 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body style="padding-top:20px">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="well">
+            <input id="btnLoadTasks" class="btn btn-success"
+                   type="button" value="Load All Tasks" />
+            <input id="btnAddTask" class="btn btn-primary"
+                   type="button" value="Add Task" />
+            <input id="btnLogoff" class="btn btn-info pull-right"
+                   type="button" value="Log Out" />
+        </div>
+        <div id="divData" class="well hidden">
+            <table class="table table-bordered" id="tblData">
+                <thead>
+                    <tr class="success">
+                        <td>QuoteID</td>
+                        <td>Quote Type</td>
+                        <td>Contact</td>
+                        <td>Task</td>
+                        <td>Task Type</td>
+                        <td>Action</td>
+                        <td>Action</td>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+        <div class="modal fade" tabindex="-1" id="errorModal"
+             data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                        <h4 class="modal-title">Session Expired</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <h2 class="modal-title">Close this message to login again</h2>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger"
+                                data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="divError" class="alert alert-danger collapse">
+            <a id="linkClose" href="#" class="close">&times;</a>
+            <div id="divErrorText"></div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form>
+
+                    <div class="form-group row">
+                        <label for="quoteid" class="col-sm-4 col-form-label">Quote ID:</label>
+                        <div class="col-sm-8">
+                            <input type="text" required class="form-control" placeholder="" readonly name="" id="quoteid">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="quotetype" class="col-sm-4 col-form-label">Quote Type:</label>
+                        <div class="col-sm-8">
+                            <input type="text" required name="Quote Type" placeholder="Quote Type" class="form-control" id="quotetype">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="contact" class="col-sm-4 col-form-label">Contact:</label>
+                        <div class="col-sm-8">
+                            <input type="text" required name="Contact" placeholder="Contact" class="form-control" id="contact">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="task" class="col-sm-4 col-form-label">Task:</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="task" placeholder="Task" required class="form-control" id="task">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="tasktype" class="col-sm-4 col-form-label">Task Type:</label>
+                        <div class="col-sm-8">
+                            <input type="text" placeholder="Task Type" class="form-control" id="tasktype">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="btn-update-entries">Update</button>
+                        <button type="button" class="btn btn-primary" id="btn-add-entries">Add</button>
+                    </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="Scripts/jquery-3.4.1.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (sessionStorage.getItem('accessToken') == null) {
+                window.location.href = "Login.html";
+            } else {
+                loadTasks();
+            }
+
+            $('#linkClose').click(function () {
+                $('#divError').hide('fade');
+            });
+
+            $(document).on("click", ".btn-update-task", function () {
+
+
+                var itemid = $(this).attr('iindex');
+                $('#editModal').modal('show');
+
+                $('#btn-update-entries').show();
+                $('#btn-add-entries').hide();
+
+                $('#quoteid').val($(this).closest('tr').find('td:nth-child(1)').text());
+                $('#quotetype').val($(this).closest('tr').find('td:nth-child(2)').text());
+                $('#contact').val($(this).closest('tr').find('td:nth-child(3)').text());
+                $('#task').val($(this).closest('tr').find('td:nth-child(4)').text());
+                $('#tasktype').val($(this).closest('tr').find('td:nth-child(5)').text());
+
+            });
+
+
+            $(document).on("click", "#btn-update-entries", function () {
+
+                var itemid = $('#quoteid').val();
+
+                var quotetype = $('#quotetype').val();
+                var contact = $('#contact').val();
+                var task = $('#task').val();
+                var tasktype = $('#tasktype').val();
+
+
+                var quote = {
+                    "QuoteType": $("#quotetype").val(),
+                    "Contact": $("#contact").val(),
+                    "Task": $("#task").val(),
+                    "TaskType": $("#tasktype").val(),
+                    "DueDate": ''
+            };
+
+
+                $.ajax({
+                    url: "/api/task/" + itemid,
+                    data: JSON.stringify(quote),
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + sessionStorage.getItem("accessToken")
+                    },
+                    success: function (response) {
+                        alert("Updated!");
+                        loadTasks();
+                       
+                    }
+                });
+
+                return true;
+                
+            });
+
+            //create
+            $(document).on("click", "#btn-add-entries", function () {
+
+               
+
+                var quotetype = $('#quotetype').val();
+                var contact = $('#contact').val();
+                var task = $('#task').val();
+                var tasktype = $('#tasktype').val();
+
+
+                var quote = {
+                    "QuoteType": $("#quotetype").val(),
+                    "Contact": $("#contact").val(),
+                    "Task": $("#task").val(),
+                    "TaskType": $("#tasktype").val(),
+                    "DueDate": ''
+                };
+
+
+                $.ajax({
+                    url: "/api/task/",
+                    data: JSON.stringify(quote),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + sessionStorage.getItem("accessToken")
+                    },
+                    success: function (response) {
+                        alert("Created!");
+                        loadTasks();
+
+                    }
+                });
+
+
+                return true;
+
+            });
+
+
+            $(document).on("click", ".btn-delete-task", function () {
+                var itemid = $(this).attr('iindex');
+                $.ajax({
+                    // Post username, password & the grant type to /token
+                    url: '/api/task/' + itemid,
+                    type: 'delete',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + sessionStorage.getItem("accessToken")
+                    },
+                    data: {
+
+                    },
+
+                    success: function (response) {
+                        alert("Deleted!");
+                        sessionStorage.setItem("accessToken", response.access_token);
+
+                    },
+
+                    error: function (jqXHR) {
+                        alert(jqXHR.responseText);
+
+                    }
+                });
+            });
+
+            $('#errorModal').on('hidden.bs.modal', function () {
+                window.location.href = "Login.html";
+            });
+
+            $('#btnAddTask').click(function () {
+                $('#editModal').modal('show');
+                $('#btn-update-entries').hide();
+                $('#btn-add-entries').show();
+               
+            });
+
+            function loadTasks() {
+                $.ajax({
+                    url: '/api/task/',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + sessionStorage.getItem("accessToken")
+                    },
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>' + value.QuoteID + '</td><td>'
+                                + value.QuoteType + '</td><td>'
+                                + value.Contact + '</td><td>'
+                                + value.Task + '</td><td>'
+                                + value.TaskType + '</td><td>'
+                                + '<button class="btn btn-danger btn-delete-task" iindex=' + value.QuoteID + '>Delete</button></td><td>'
+                                + '<button class="btn btn-primary btn-update-task" iindex=' + value.QuoteID + '>Update</button>'
+                                + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            }
+
+            $('#btnLoadTasks').click(function () {
+                $.ajax({
+                    url: '/api/task/',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + sessionStorage.getItem("accessToken")
+                    },
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>' + value.QuoteID + '</td><td>'
+                                + value.QuoteType + '</td><td>'
+                                + value.Contact + '</td><td>'
+                                + value.Task + '</td><td>'
+                                + value.TaskType + '</td><td>'
+                                + '<button class="btn btn-danger btn-delete-task" iindex=' + value.QuoteID + '>Delete</button></td><td>'
+                                + '<button class="btn btn-primary btn-update-task" iindex=' + value.QuoteID + '>Update</button>'
+                                + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            });
+
+            $('#btnLogoff').click(function () {
+                sessionStorage.removeItem('accessToken');
+                window.location.href = "Login.html";
+            });
+
+
+
+        });
+    </script>
+</body>
+</html>
