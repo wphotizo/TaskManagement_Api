@@ -137,6 +137,7 @@
 
             $(document).on("click", ".btn-update-task", function () {
 
+                $('.modal-title').text("Update Existing Task");
 
                 var itemid = $(this).attr('iindex');
                 $('#editModal').modal('show');
@@ -251,7 +252,8 @@
 
                     success: function (response) {
                         alert("Deleted!");
-                        sessionStorage.setItem("accessToken", response.access_token);
+                        loadTasks();
+                      
 
                     },
 
@@ -267,6 +269,9 @@
             });
 
             $('#btnAddTask').click(function () {
+
+                $('.modal-title').text("Add New Task");
+
                 $('#editModal').modal('show');
                 $('#btn-update-entries').hide();
                 $('#btn-add-entries').show();
